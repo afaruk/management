@@ -1,21 +1,21 @@
 package clientApi;
 
-public class ManagementResponse implements Response {
+import java.io.Serializable;
 
-    private ActionResponse response;
-    private int requestId;
+public class ManagementResponse implements Serializable {
+
+    private final ActionResponse response;
+    private final int requestId;
 
     public ManagementResponse(ActionResponse response, int requestId) {
         this.response = response;
         this.requestId = requestId;
     }
 
-    @Override
     public ActionResponse getActionResponse() {
         return response;
     }
 
-    @Override
     public int getRequestId() {
         return requestId;
     }

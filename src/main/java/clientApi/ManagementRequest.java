@@ -1,39 +1,22 @@
 package clientApi;
 
-import java.util.Random;
-import java.util.StringJoiner;
+import java.io.Serializable;
 
-public class ManagementRequest implements Request {
+public class ManagementRequest implements Serializable {
 
+    private final ActionRequest actionRequest;
     private final int id;
-    private String userPrincipal;
-    private ActionRequest request;
 
-    public ManagementRequest(String userPrincipal, ActionRequest request) {
-        this.userPrincipal = userPrincipal;
-        this.request = request;
-        this.id = new Random().nextInt();
-    }
-    @Override
-    public String getUserPrincipal() {
-        return userPrincipal;
+    public ManagementRequest(ActionRequest actionRequest, int id) {
+        this.actionRequest = actionRequest;
+        this.id = id;
     }
 
-    @Override
-    public ActionRequest getActionRequest() {
-        return request;
+    public ActionRequest getActionRequest(){
+        return actionRequest;
     }
 
-    @Override
-    public int getId() {
+    public int  getId(){
         return id;
-    }
-
-    @Override
-    public String toString() {
-        StringJoiner joiner = new StringJoiner("{", ",", "}");
-        joiner.add("userPrincipal:" + userPrincipal);
-        joiner.add("acRequest:" + request.toString());
-        return joiner.toString();
     }
 }

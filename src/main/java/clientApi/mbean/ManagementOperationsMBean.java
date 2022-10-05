@@ -5,6 +5,6 @@ import clientApi.*;
 
 public interface ManagementOperationsMBean {
 
-    Response send(Request request) throws ManagementException;
+    ManagementResponse send(ManagementRequest request) throws ManagementException;
 
 }

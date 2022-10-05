@@ -1,22 +1,16 @@
 package server.user.auth;
 
 import com.sun.security.auth.UserPrincipal;
-import server.management.session.ManagementSessionService;
 import server.user.User;
 import server.user.UserRepository;
 
 import javax.management.remote.JMXAuthenticator;
 import javax.security.auth.Subject;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ManagementAuthenticator implements JMXAuthenticator {
-    private ManagementSessionService sessionService;
     private UserRepository userRepository;
 
-    public ManagementAuthenticator(ManagementSessionService sessionService, UserRepository userRepository) {
-        this.sessionService = sessionService;
+    public ManagementAuthenticator(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -38,7 +32,7 @@ public class ManagementAuthenticator implements JMXAuthenticator {
         subject.getPrincipals().add(new UserPrincipal(principal));
         //Role ekleme işi burada da yapılabilir.
 
-        sessionService.createSession(principal, user.getRoles());
+        SecurityContext.addUserSession(new AuthenticatedUser(principal, user.getRoles()));
         return subject;
     }
 }

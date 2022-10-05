@@ -1,7 +1,6 @@
 import clientApi.ManagementException;
 import clientApi.ManagementRequest;
-import clientApi.Request;
-import clientApi.Response;
+import clientApi.ManagementResponse;
 import clientApi.operations.AddNetworkInterfaceOperationRequest;
 import clientApi.operations.AddNetworkInterfaceOperationResponse;
 import org.junit.Assert;
@@ -11,6 +10,8 @@ import org.junit.Test;
 import javax.management.MalformedObjectNameException;
 import java.io.IOException;
 
+//TODO:server'ın açık olması gerekiyor testin geçmesi için. Server'ın stopu da yok test öncesi aç
+// kapansa ve isolasyon sağlansa.
 public class AdminRoleManagementServiceTest {
 
     // NOT testlerden once Server çalıştırılmalıdır.
@@ -20,15 +21,14 @@ public class AdminRoleManagementServiceTest {
 
     @Before
     public void setUp() throws IOException, MalformedObjectNameException {
-        String configPath = "D:\\GitRepo\\managment\\src\\test\\java\\config\\";
-        client = new Client(userPrincipal, "12345", configPath);
+        client = new Client(userPrincipal, "12345", ConfigPathUtil.getConfigPath());
     }
 
     @Test
     public void shouldAddNI() throws IOException, ManagementException {
         var acRequest = new AddNetworkInterfaceOperationRequest.Builder().addNetworkAddress("1.1.1.1").addPort(333).build();
-        Request opRequest = new ManagementRequest(userPrincipal, acRequest);
-        Response response = client.sendRequest(opRequest);
+        ManagementRequest opRequest = new ManagementRequest(acRequest, 2);
+        ManagementResponse response = client.sendRequest(opRequest);
         System.out.println("İstek ID..." + response.getRequestId());
         AddNetworkInterfaceOperationResponse addNIResponse = (AddNetworkInterfaceOperationResponse) response.getActionResponse();
         System.out.println("Sonuç..." + addNIResponse.getResult());
