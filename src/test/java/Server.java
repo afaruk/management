@@ -10,6 +10,7 @@ import server.user.UserRepository;
 import server.user.auth.ManagementAuthenticator;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.util.HashMap;
@@ -26,7 +27,7 @@ public class Server {
 
     public static void main(String[] args) throws Exception {
         int port = 9999;
-        String configPath = "D:\\GitRepo\\managment\\src\\test\\java\\config\\";
+        String configPath= Paths.get("src","test","java","config").toFile().getAbsolutePath();
         Server server = new Server(port, configPath);
         server.start();
     }
@@ -85,7 +86,7 @@ public class Server {
 
     private void setSystemEnvironments(int port, String configPath) throws RemoteException {
         LocateRegistry.createRegistry(port);
-        System.setProperty("javax.net.ssl.keyStore", configPath + "keyStore");
+        System.setProperty("javax.net.ssl.keyStore", Paths.get(configPath, "keystore").toString());
         System.setProperty("javax.net.ssl.keyStorePassword", "password");
     }
 }
