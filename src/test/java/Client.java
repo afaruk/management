@@ -6,6 +6,7 @@ import clientApi.operations.AddNetworkInterfaceOperationRequest;
 import clientApi.mbean.ManagementOperationsMBean;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import javax.management.JMX;
 import javax.management.MBeanServerConnection;
@@ -18,7 +19,7 @@ import javax.management.remote.JMXServiceURL;
 public class Client {
 
     public static void main(String[] args) throws IOException, MalformedObjectNameException, ManagementException {
-        String configPath = "D:\\GitRepo\\managment\\src\\test\\java\\config\\";
+        String configPath = Paths.get("src","test", "java", "config").toAbsolutePath().toString();
         Client ahmet = new Client("ahmet", "12345", configPath);
         var acRequest = new AddNetworkInterfaceOperationRequest.Builder().addNetworkAddress("1.1.1.1").addPort(333).build();
         Request opRequest = new ManagementRequest("ahmet", acRequest);
@@ -65,7 +66,7 @@ public class Client {
     }
 
     private void setSystemEnv(String confPath) {
-        System.setProperty("javax.net.ssl.trustStore", confPath + "truststore");
+        System.setProperty("javax.net.ssl.trustStore", Paths.get(confPath, "truststore").toString());
         System.setProperty("javax.net.ssl.trustStorePassword", "trustword");
     }
 }

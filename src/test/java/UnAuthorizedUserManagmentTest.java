@@ -11,10 +11,11 @@ import server.user.auth.ManagementAuthenticator;
 
 import javax.management.MalformedObjectNameException;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 public class UnAuthorizedUserManagmentTest {
 
-    private String configPath = "D:\\GitRepo\\managment\\src\\test\\java\\config\\";
+    private String configPath = Paths.get("src", "test","java", "config").toAbsolutePath().toString();
 
     @Test
     public void shouldTakeNot_AuthorizedException() throws IOException, MalformedObjectNameException, ManagementException {

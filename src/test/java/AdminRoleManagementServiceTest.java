@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import javax.management.MalformedObjectNameException;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 public class AdminRoleManagementServiceTest {
 
@@ -20,7 +21,7 @@ public class AdminRoleManagementServiceTest {
 
     @Before
     public void setUp() throws IOException, MalformedObjectNameException {
-        String configPath = "D:\\GitRepo\\managment\\src\\test\\java\\config\\";
+        String configPath = Paths.get("src", "test","java", "config").toAbsolutePath().toString();
         client = new Client(userPrincipal, "12345", configPath);
     }
 
