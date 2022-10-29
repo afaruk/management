@@ -14,7 +14,7 @@ public class ManagementOperations implements ManagementOperationsMBean {
     }
 
     @Override
-    public Response send(Request request) throws ManagementException {
+    public ManagementResponse send(ManagementRequest request) throws ManagementException {
         return mngmntService.execute(request);
     }
 }

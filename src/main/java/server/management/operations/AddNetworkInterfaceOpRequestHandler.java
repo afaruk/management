@@ -10,13 +10,15 @@ public class AddNetworkInterfaceOpRequestHandler implements RequestHandler<AddNe
 
     @Override
     public ActionResponse handle(AddNetworkInterfaceOperationRequest request) {
+        //TODO: ertugrul: requestlerde parameters gibi map based type safe olmayan yapı gerekli
+        // değil. Handlerlar generic bir şekilde ilgili requeste mapleniyor.
         Map<String, String> parameters = request.getParameters();
         System.out.println(parameters);
         return new AddNetworkInterfaceOperationResponse("Başarılı");
     }
 
     @Override
-    public String getRequestType() {
+    public String getPrivilege() {
         return "ADD NI";
     }
 }

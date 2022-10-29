@@ -1,11 +1,12 @@
 import clientApi.mbean.ManagementOperationsMBean;
+import clientApi.operations.AddNetworkInterfaceOperationRequest;
+import clientApi.operations.RemoveNetworkInterfaceOperationsRequest;
 import server.management.ManagementService;
-import server.management.*;
+import server.management.ManagementServiceImpl;
 import server.management.mbean.ManagementOperations;
 import server.management.operations.AddNetworkInterfaceOpRequestHandler;
-import server.management.operations.RequestDispatcherImpl;
-import server.management.session.ManagementSessionService;
-import server.management.session.ManagementSessionServiceImpl;
+import server.management.operations.RemoveNetworkInterfaceOpRequestHandler;
+import server.management.operations.provider.RequestHandlerProviderImpl;
 import server.user.UserRepository;
 import server.user.auth.ManagementAuthenticator;
 
@@ -26,7 +27,7 @@ public class Server {
 
     public static void main(String[] args) throws Exception {
         int port = 9999;
-        String configPath = "D:\\GitRepo\\managment\\src\\test\\java\\config\\";
+        String configPath = ConfigPathUtil.getConfigPath();
         Server server = new Server(port, configPath);
         server.start();
     }
@@ -36,10 +37,9 @@ public class Server {
     public Server(int port, String configPath) throws Exception {
         setSystemEnvironments(port, configPath);
 
-        var sessionService = new ManagementSessionServiceImpl();
         var userRepository = new UserRepository();
-        ManagementService mngmntService = createManagementService(sessionService);
-        server = createServer(port, mngmntService, sessionService, userRepository);
+        ManagementService mngmntService = createManagementService();
+        server = createServer(port, mngmntService, userRepository);
     }
 
     public void start() throws IOException {
@@ -47,16 +47,17 @@ public class Server {
         System.out.println("\nSunucu başlatılmıştır");
     }
 
-    private ManagementService createManagementService(ManagementSessionService sessionService) {
-        var requestDispatcher = new RequestDispatcherImpl();
-        var addNetworkInterfaceOpRequestHandler = new AddNetworkInterfaceOpRequestHandler();
-        requestDispatcher.registerHandler(addNetworkInterfaceOpRequestHandler);
-        return new ManagementServiceImpl(sessionService, requestDispatcher);
+    private ManagementService createManagementService() {
+        var requestDispatcher = new RequestHandlerProviderImpl();
+        requestDispatcher.registerHandler(AddNetworkInterfaceOperationRequest.class,
+                new AddNetworkInterfaceOpRequestHandler());
+        requestDispatcher.registerHandler(RemoveNetworkInterfaceOperationsRequest.class, new RemoveNetworkInterfaceOpRequestHandler());
+        return new ManagementServiceImpl(requestDispatcher);
     }
 
-    private JMXConnectorServer createServer(int port, ManagementService mngmntService, ManagementSessionService sessionService, UserRepository userRepository) throws IOException, MalformedObjectNameException, InstanceAlreadyExistsException, NotCompliantMBeanException, MBeanRegistrationException {
+    private JMXConnectorServer createServer(int port, ManagementService mngmntService, UserRepository userRepository) throws IOException, MalformedObjectNameException, InstanceAlreadyExistsException, NotCompliantMBeanException, MBeanRegistrationException {
         MBeanServer mbs = registerMBean(mngmntService);
-        var managementAuthenticator = new ManagementAuthenticator(sessionService, userRepository);
+        var managementAuthenticator = new ManagementAuthenticator(userRepository);
         HashMap env = setJMXEnvironments(managementAuthenticator);
         JMXServiceURL url = new JMXServiceURL(
                 "service:jmx:rmi:///jndi/rmi://localhost:"+ port +"/server");

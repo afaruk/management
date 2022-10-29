@@ -12,7 +12,7 @@ public class RemoveNetworkInterfaceOpRequestHandler implements RequestHandler<Re
     }
 
     @Override
-    public String getRequestType() {
-        return "RemoveNetworkInterface";
+    public String getPrivilege() {
+        return "REMOVE NI";
     }
 }

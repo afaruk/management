@@ -1,9 +1,10 @@
+import clientApi.ActionRequest;
 import clientApi.ManagementException;
 import clientApi.ManagementRequest;
-import clientApi.Request;
-import clientApi.Response;
+import clientApi.ManagementResponse;
 import clientApi.operations.AddNetworkInterfaceOperationRequest;
 import clientApi.mbean.ManagementOperationsMBean;
+import clientApi.operations.RemoveNetworkInterfaceOperationsRequest;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,12 +19,18 @@ import javax.management.remote.JMXServiceURL;
 public class Client {
 
     public static void main(String[] args) throws IOException, MalformedObjectNameException, ManagementException {
-        String configPath = "D:\\GitRepo\\managment\\src\\test\\java\\config\\";
+        String configPath = ConfigPathUtil.getConfigPath();
         Client ahmet = new Client("ahmet", "12345", configPath);
-        var acRequest = new AddNetworkInterfaceOperationRequest.Builder().addNetworkAddress("1.1.1.1").addPort(333).build();
-        Request opRequest = new ManagementRequest("ahmet", acRequest);
-        Response response = ahmet.sendRequest(opRequest);
+        ManagementResponse response = getManagementResponse(ahmet, new AddNetworkInterfaceOperationRequest.Builder().addNetworkAddress("1.1.1.1").addPort(333).build());
         System.out.println("Sonuc..." + response.toString());
+        ManagementResponse managementResponse = getManagementResponse(ahmet, new RemoveNetworkInterfaceOperationsRequest());
+        System.out.println("Sonuc..." + response.toString());
+    }
+
+    private static ManagementResponse getManagementResponse(Client ahmet, ActionRequest acRequest) throws ManagementException {
+        ManagementRequest opRequest = new ManagementRequest(acRequest, 5);
+        ManagementResponse response = ahmet.sendRequest(opRequest);
+        return response;
     }
 
     private ManagementOperationsMBean service;
@@ -35,7 +42,7 @@ public class Client {
         this.service = getService(jmxc);
     }
 
-    public Response sendRequest(Request request) throws ManagementException {
+    public ManagementResponse sendRequest(ManagementRequest request) throws ManagementException {
         return service.send(request);
     }
 

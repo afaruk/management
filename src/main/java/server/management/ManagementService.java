@@ -4,5 +4,5 @@ import clientApi.*;
 
 public interface ManagementService {
 
-    Response execute(Request request) throws ManagementException;
+    ManagementResponse execute(ManagementRequest request) throws ManagementException;
 }

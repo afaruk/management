@@ -5,7 +5,7 @@ import clientApi.ActionRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddNetworkInterfaceOperationRequest implements ActionRequest<Map<String, String>> {
+public class AddNetworkInterfaceOperationRequest implements ActionRequest {
 
     private Map<String, String> params;
 
@@ -13,12 +13,6 @@ public class AddNetworkInterfaceOperationRequest implements ActionRequest<Map<St
         this.params = params;
     }
 
-    @Override
-    public String getType() {
-        return "ADD NI";
-    }
-
-    @Override
     public Map<String, String> getParameters() {
         return params;
     }
