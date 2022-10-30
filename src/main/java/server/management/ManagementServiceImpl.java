@@ -4,13 +4,14 @@ import clientApi.ActionResponse;
 import clientApi.ManagementException;
 import clientApi.ManagementRequest;
 import clientApi.ManagementResponse;
-import server.management.ManagementService;
 import server.management.operations.provider.ProvidedHandler;
 import server.management.operations.provider.RequestHandlerProvider;
 import server.user.auth.AuthenticatedUser;
-import server.user.auth.SecurityContext;
+import server.user.auth.jmx.AuthenticatedUserPrincipal;
+import server.user.auth.jmx.JmxAuthenticationContext;
 import server.user.autz.Role;
 
+import javax.security.auth.Subject;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,11 +35,17 @@ public class ManagementServiceImpl implements ManagementService {
         ProvidedHandler<?> providedHandler =
                 requestHandlerProvider.retrieveHandler(request.getActionRequest());
 
-        if (!isAuthorized(providedHandler, SecurityContext.getCurrentUser())) {
+        if (!isAuthorized(providedHandler, retrieveAuthenticatedUser())) {
             throw new ManagementException(ManagementException.Type.NOT_AUTHORIZED);
         }
         ActionResponse actionResponse = providedHandler.get();
         return new ManagementResponse(actionResponse, request.getId());
+    }
+
+    private AuthenticatedUser retrieveAuthenticatedUser() {
+        Subject authenticatedUser = JmxAuthenticationContext.getAuthenticatedUser();
+        AuthenticatedUserPrincipal authenticatedUserPrincipal = (AuthenticatedUserPrincipal) authenticatedUser.getPrincipals().iterator().next();
+        return authenticatedUserPrincipal.getAuthenticatedUser();
     }
 
 
